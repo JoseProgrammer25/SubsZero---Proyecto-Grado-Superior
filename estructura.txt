@@ -1,0 +1,52 @@
+suscripciones-app/
+│
+├── index.php
+│
+├── auth/
+│   ├── login.php
+│   ├── signup.php
+│   └── logout.php
+│
+├── app/
+│   ├── dashboard.php
+│   ├── config/
+│   │   └── db.php
+│   ├── includes/
+│   │   ├── header.php
+│   │   ├── footer.php
+│   │   ├── sidebar.php
+│   │   ├── navbar.php
+│   │   └── functions.php
+│   ├── controllers/
+│   │   ├── authController.php
+│   │   ├── subscriptionController.php
+│   │   ├── categoryController.php
+│   │   ├── notificationController.php
+│   │   └── reportController.php
+│   ├── models/
+│   │   ├── User.php
+│   │   ├── Subscription.php
+│   │   ├── Category.php
+│   │   └── Notification.php
+│   └── views/
+│       ├── add_subscription.php
+│       ├── edit_subscription.php
+│       ├── list_subscriptions.php
+│       ├── add_category.php
+│       ├── edit_category.php
+│       ├── list_categories.php
+│       ├── report.php
+│       └── notifications.php
+│
+├── public/
+│   ├── css/
+│   │   └── styles.css
+│   ├── js/
+│   │   └── main.js
+│   ├── img/
+│   └── vendor/
+│       └── bootstrap/
+│
+└── assets/
+    ├── favicon.ico
+    └── logo.png
