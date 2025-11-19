@@ -42,7 +42,7 @@
                     <?php endif; ?>
 
                     <!-- Formulario -->
-                    <form class="space-y-4" action="../app/controllers/logedin.php" method="POST">
+                    <form class="space-y-4" action="../app/controllers/process_login.php" method="POST">
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                             <input

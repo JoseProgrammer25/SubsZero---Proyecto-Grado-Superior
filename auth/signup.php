@@ -64,7 +64,7 @@
                     ?>
 
                     <!-- Form -->
-                    <form class="space-y-4" action="../app/controllers/register.php" method="POST">
+                    <form class="space-y-4" action="../app/controllers/process_signup.php" method="POST">
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700">Nombre completo</label>
                             <input

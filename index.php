@@ -51,7 +51,7 @@
 
                     <!-- Botones en hero section -->
                     <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                        <a href="auth/signup">   
+                        <a href="auth/signup.php">   
                             <button class="w-full md:w-auto p-2 pl-4 pr-4 bg-blue-800 rounded-xl text-white text-center duration-300 hover:bg-blue-700 hover:cursor-pointer">
                                 Comenzar Gratis
                             </button>
