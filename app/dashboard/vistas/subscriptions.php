@@ -94,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['form_action']) && $_PO
         $name = trim($_POST['name']);
         $description = trim($_POST['description']);
         $price = $_POST['price'];
-        $billing_cycle = $_POST['billing_cycle'];
+        $billing_cycle = $_POST['billing_cycle']; // (ej. 'monthly', 'annually')
         $next_billing_date = $_POST['next_billing_date'];
         $category_id = $_POST['category_id'];
 
@@ -353,15 +353,24 @@ $conn->close();
                     
                     <?php if ($success_message): ?>
                         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg relative mb-6" role="alert">
-                            <span class="block sm:inline"><?php echo htmlspecialchars($success_message); ?></span>
+                            <span class="block sm:inline pr-10"><?php echo htmlspecialchars($success_message); ?></span>
+                            <button type="button" class="close-alert-btn absolute top-1/2 right-3 transform -translate-y-1/2 text-green-700 hover:text-green-900" aria-label="Cerrar">
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
                         </div>
                     <?php endif; ?>
                     <?php if ($error_message): ?>
                         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-6" role="alert">
-                            <span class="block sm:inline"><?php echo htmlspecialchars($error_message); ?></span>
+                            <span class="block sm:inline pr-10"><?php echo htmlspecialchars($error_message); ?></span>
+                            <button type="button" class="close-alert-btn absolute top-1/2 right-3 transform -translate-y-1/2 text-red-700 hover:text-red-900" aria-label="Cerrar">
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
                         </div>
                     <?php endif; ?>
-
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
                         <form method="GET" action="subscriptions.php" class="flex flex-col sm:flex-row gap-4">
                             <div class="relative flex-1">
@@ -471,7 +480,7 @@ $conn->close();
 
     <div id="subscription-modal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-4">
         
-        <div class="fixed inset-0 bg-black/25 backdrop-blur-sm"></div>
+        <div id="modal-overlay" class="fixed inset-0 bg-black/75 bg-opacity-25 backdrop-blur-sm"></div>
         
         <div class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-2xl relative z-10 transform scale-95 opacity-0">
             <form action="subscriptions.php" method="POST">
@@ -515,11 +524,11 @@ $conn->close();
                             <label for="modal-billing_cycle" class="block text-sm font-medium text-gray-700">Ciclo de Facturación <span class="text-red-500">*</span></label>
                             <select name="billing_cycle" id="modal-billing_cycle" required
                                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
-                                <option value="monthly">Mensual</option>
-                                <option value="annually">Anual</option>
-                                <option value="quarterly">Trimestral</option>
-                                <option value="weekly">Semanal</option>
-                                <option value="once">Pago único</option>
+                                <option value="mensual">Mensual</option>
+                                <option value="anual">Anual</option>
+                                <option value="trimestral">Trimestral</option>
+                                <option value="semanal">Semanal</option>
+                                <option value="unico">Pago único</option>
                             </select>
                         </div>
                     </div>
@@ -534,7 +543,7 @@ $conn->close();
                         <div>
                             <label for="modal-category_id" class="block text-sm font-medium text-gray-700">Categoría (Opcional)</label>
                             <select name="category_id" id="modal-category_id"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-600 focus:border-blue-600 sm:text-sm">
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-600 focus:border-Gblue-600 sm:text-sm">
                                 <option value="none">-- Sin categoría --</option>
                                 <?php foreach ($categories as $category): ?>
                                     <option value="<?php echo $category['id']; ?>">
@@ -557,6 +566,7 @@ $conn->close();
             </form>
         </div>
     </div>
+    
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -581,7 +591,7 @@ $conn->close();
             }
         });
 
-        // --- ¡NUEVO JS PARA EL MODAL! ---
+        // --- JS PARA EL MODAL Y ALERTAS ---
         document.addEventListener('DOMContentLoaded', () => {
             const modal = document.getElementById('subscription-modal');
             const modalContent = modal.querySelector('.modal-content');
@@ -616,13 +626,29 @@ $conn->close();
                 btn.addEventListener('click', closeModal);
             });
 
-            // Cierra el modal si se hace clic en el overlay
-            document.getElementById('modal-overlay').addEventListener('click', closeModal);
+            // ¡CORREGIDO! Asegurándonos de que el overlay tiene el ID correcto
+            const modalOverlay = document.getElementById('modal-overlay');
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', closeModal);
+            }
             
             // Si hubo un error de PHP al enviar el formulario, vuelve a abrir el modal para mostrar el error.
             <?php if ($_SERVER["REQUEST_METHOD"] == "POST" && $error_message): ?>
                 openModal();
             <?php endif; ?>
+
+            // --- ¡NUEVO! JS PARA CERRAR ALERTAS ---
+            const alertCloseButtons = document.querySelectorAll('.close-alert-btn');
+            
+            alertCloseButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    // Sube al elemento padre (el div del alert) y lo oculta
+                    const alertBox = event.currentTarget.parentElement;
+                    if (alertBox) {
+                        alertBox.style.display = 'none';
+                    }
+                });
+            });
         });
     </script>
 </body>
