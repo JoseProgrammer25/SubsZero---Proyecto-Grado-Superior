@@ -402,7 +402,7 @@
                             <h4 class="font-semibold">Soporte</h4>
                             <ul class="mt-4 space-y-2">
                             <li>
-                                <a href="#" class="text-sm">
+                                <a href="pages/ayuda.php" class="text-sm">
                                 Ayuda
                                 </a>
                             </li>
