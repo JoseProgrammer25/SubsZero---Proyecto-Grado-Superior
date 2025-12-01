@@ -177,7 +177,6 @@
                         content.classList.toggle('active');
 
                         // Alternar la rotación de la flecha
-                        // La flecha por defecto (0 grados) es hacia abajo. 
                         // Queremos rotarla 180 grados (hacia arriba) cuando está abierta.
                         if (content.classList.contains('active')) {
                             arrow.style.transform = 'rotate(180deg)';
