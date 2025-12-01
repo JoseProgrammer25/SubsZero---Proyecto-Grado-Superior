@@ -193,12 +193,12 @@
                         <h4 class="font-semibold">Soporte</h4>
                         <ul class="mt-4 space-y-2">
                             <li>
-                                <a href="pages/ayuda.php" class="text-sm">
+                                <a href="ayuda.php" class="text-sm">
                                     Ayuda
                                 </a>
                             </li>
                             <li>
-                                <a href="pages/contact.php" class="text-sm">
+                                <a href="contact.php" class="text-sm">
                                     Contacto
                                 </a>
                             </li>
