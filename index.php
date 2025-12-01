@@ -407,7 +407,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#" class="text-sm">
+                                <a href="pages/contact.php" class="text-sm">
                                 Contacto
                                 </a>
                             </li>
