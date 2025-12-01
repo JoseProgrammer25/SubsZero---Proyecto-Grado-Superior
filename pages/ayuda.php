@@ -163,6 +163,85 @@
             </div>
         </main>
 
+        <!-- Footer -->
+        <footer class="border-t-1 border-gray-300 bg-gray-50 py-12">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                        
+                    <!-- Logo y descripción -->
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-800">
+                                <span class="text-lg font-bold text-white">S</span>
+                            </div>
+                            <span class="text-xl font-bold">SubsZero</span>
+                            </div>
+                            <p class="mt-4 text-sm">
+                                Control total de tus suscripciones en un solo lugar.
+                            </p>
+                    </div>
+
+                    <!-- Producto -->
+                    <div>
+                        <h4 class="font-semibold">Producto</h4>
+                        <ul class="mt-4 space-y-2">
+                            <li>
+                                <a href="#features" class="text-sm">
+                                    Características
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#pricing" class="text-sm">
+                                    Precios
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Legal -->
+                    <div>
+                        <h4 class="font-semibold">Legal</h4>
+                        <ul class="mt-4 space-y-2">
+                            <li>
+                                <a href="documentation/privacy-policy.html" class="text-sm">
+                                    Privacidad
+                                </a>
+                            </li>
+                            <li>
+                                <a href="documentation/terms-and-conditions.html" class="text-sm">
+                                    Términos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Soporte -->
+                    <div>
+                        <h4 class="font-semibold">Soporte</h4>
+                        <ul class="mt-4 space-y-2">
+                            <li>
+                                <a href="ayuda.php" class="text-sm">
+                                    Ayuda
+                                </a>
+                            </li>
+                            <li>
+                                <a href="contact.php" class="text-sm">
+                                    Contacto
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                        </div>
+
+                        <div class="mt-12 border-t-1 border-gray-300 pt-8 text-center">
+                        <p class="text-sm">
+                            © <?php echo date('Y'); ?> SubsZero. Todos los derechos reservados.
+                        </p>
+                        </div>
+                    </div>
+                </footer>
+
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 
