@@ -12,20 +12,8 @@ $user_id = $_SESSION['user_id'];
 // Conectar a la base de datos para obtener información actualizada del usuario
 require_once '../config/db.php';
 
-// --- ¡BLOQUE MODIFICADO! ---
-// Obtener datos actualizados del usuario, su rol (con JOINS) y su perfil (1:1)
-$stmt = $conn->prepare("
-    SELECT 
-        u.username, u.email,
-        a.user_id as is_admin, 
-        p.user_id as is_premium,
-        up.profile_pic_url
-    FROM users u
-    LEFT JOIN admin_users a ON u.id = a.user_id
-    LEFT JOIN premium_users p ON u.id = p.user_id
-    LEFT JOIN user_profiles up ON u.id = up.user_id
-    WHERE u.id = ?
-");
+// Obtener datos actualizados del usuario desde la base de datos
+$stmt = $conn->prepare("SELECT username, email, role_id FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -34,23 +22,22 @@ $stmt->close();
 
 $username = $user_data['username'] ?? $_SESSION['username'];
 $email = $user_data['email'] ?? $_SESSION['email'];
-$profile_pic = $user_data['profile_pic_url'] ?? null; // Para la foto de perfil
+$role_id = $user_data['role_id'] ?? 2;
 
-// Determinar el rol del usuario (basado en la nueva jerarquía)
-if ($user_data['is_admin'] !== null) {
-    $role = 'admin';
-    $role_name = 'Admin';
-    $role_badge_color = 'bg-blue-700';
-} elseif ($user_data['is_premium'] !== null) {
-    $role = 'premium';
-    $role_name = 'Premium';
-    $role_badge_color = 'bg-gradient-to-r from-yellow-500 to-amber-600';
-} else {
-    $role = 'user';
-    $role_name = 'Usuario';
-    $role_badge_color = 'bg-gray-600';
+// Determinar el rol del usuario
+switch ($role_id) {
+    case 1:
+        $role_name = 'Admin';
+        $role_badge_color = 'bg-blue-700';
+        break;
+    case 3:
+        $role_name = 'Premium';
+        $role_badge_color = 'bg-gradient-to-r from-yellow-500 to-amber-600';
+        break;
+    default:
+        $role_name = 'Usuario';
+        $role_badge_color = 'bg-gray-600';
 }
-// --- FIN BLOQUE MODIFICADO ---
 
 // Obtener la inicial del nombre de usuario
 $user_initial = strtoupper(substr($username, 0, 1));
@@ -150,15 +137,9 @@ try {
             <!-- Información del usuario -->
             <div class="p-4 bg-gray-50 border-b border-gray-200">
                 <div class="flex items-center space-x-3">
-                    <!-- --- BLOQUE MODIFICADO (para usar $role y $profile_pic) --- -->
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full <?php echo ($role == 'premium') ? 'bg-gradient-to-br from-yellow-400 to-amber-600' : 'bg-blue-100'; ?> <?php echo ($role == 'premium') ? 'text-white' : 'text-blue-700'; ?> font-semibold text-lg flex-shrink-0">
-                        <?php if (isset($profile_pic) && $profile_pic !== 'default_avatar.png' && $profile_pic !== '' && $profile_pic !== null): ?>
-                            <img class="h-10 w-10 rounded-full object-cover" src="<?php echo htmlspecialchars($profile_pic); ?>" alt="Avatar">
-                        <?php else: ?>
-                            <?php echo $user_initial; ?>
-                        <?php endif; ?>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full <?php echo ($role_id == 3) ? 'bg-gradient-to-br from-yellow-400 to-amber-600' : 'bg-blue-100'; ?> <?php echo ($role_id == 3) ? 'text-white' : 'text-blue-700'; ?> font-semibold text-lg flex-shrink-0">
+                        <?php echo $user_initial; ?>
                     </div>
-                    <!-- --- FIN BLOQUE MODIFICADO --- -->
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-semibold text-gray-900 truncate"><?php echo htmlspecialchars($username); ?></p>
                         <p class="text-xs text-gray-500 truncate"><?php echo htmlspecialchars($email); ?></p>
@@ -166,8 +147,7 @@ try {
                 </div>
                 <div class="mt-2">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?php echo $role_badge_color; ?> text-white">
-                        <!-- --- BLOQUE MODIFICADO (para usar $role) --- -->
-                        <?php if ($role == 'premium'): ?>
+                        <?php if ($role_id == 3): ?>
                             <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
@@ -177,7 +157,6 @@ try {
                             </svg>
                         <?php endif; ?>
                         <?php echo $role_name; ?>
-                        <!-- --- FIN BLOQUE MODIFICADO --- -->
                     </span>
                 </div>
             </div>
@@ -230,7 +209,7 @@ try {
 
             <!-- Botón de cerrar sesión -->
             <div class="p-4 border-t border-gray-200">
-                <a href="../../auth/logout.php" class="flex items-center px-3 py-2.5 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors">
+                <a href="../auth/logout.php" class="flex items-center px-3 py-2.5 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors">
                     <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                     </svg>
@@ -357,7 +336,6 @@ try {
                             $result = $stmt->get_result();
                             $upcoming_payments = $result->fetch_all(MYSQLI_ASSOC);
                             $stmt->close();
-                            $conn->close(); // Cerrar la conexión principal
 
                             if (count($upcoming_payments) > 0):
                                 foreach ($upcoming_payments as $payment):
