@@ -183,7 +183,7 @@ $conn->close();
     <title>Estadísticas - SubsZero</title>
     <link rel="icon" href="../../../assets/favicon.ico">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.2/chart.umd.min.js"></script>
     <style>
         /* Estilos específicos para la barra de navegación del teléfono */
         .modal { transition: opacity 0.25s ease; }
@@ -495,72 +495,94 @@ $conn->close();
 
         // --- LÓGICA DE GRÁFICOS (Chart.js) ---
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing charts');
             
             // Datos PHP a JS
             const distribucionGastos = <?php echo json_encode($stats['DistribucionGastos']); ?>;
             const proyeccionGastos = <?php echo json_encode($stats['ProyeccionGastos']); ?>;
             const gastosPorCategoria = <?php echo json_encode($gastos_por_categoria); ?>; // Usamos el array simple para el bar chart de categoría
 
+            console.log('Data loaded:', { distribucionGastos, proyeccionGastos, gastosPorCategoria });
+
             // Generación de colores dinámicos (para el pastel y barras)
             const baseColors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8', '#fd7e14', '#e83e8c'];
             const labelsCategorias = distribucionGastos.map(item => item.categoria);
             const dataCategorias = distribucionGastos.map(item => item.gasto);
 
+            // Verificar si Chart.js está cargado
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js no está cargado');
+                alert('Error: Chart.js no se pudo cargar. Verifica tu conexión a internet o el CDN.');
+                return;
+            }
+
+            console.log('Chart.js loaded, creating charts');
+
             // 1. Gráfico de Gasto por Categoría (Barras)
             if (document.getElementById('categoryBarChart')) {
-                new Chart(document.getElementById('categoryBarChart'), {
-                    type: 'bar',
-                    data: {
-                        labels: Object.keys(gastosPorCategoria), // Nombres de categorías
-                        datasets: [{
-                            label: 'Gasto Mensual (€)',
-                            data: Object.values(gastosPorCategoria), // Gastos por categoría
-                            backgroundColor: baseColors.slice(0, Object.keys(gastosPorCategoria).length).map(c => c + 'cc'), // Ligeramente más transparente
-                            borderColor: baseColors.slice(0, Object.keys(gastosPorCategoria).length),
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { beginAtZero: true, title: { display: true, text: 'Gasto (€)' } },
-                            x: { grid: { display: false } }
+                try {
+                    new Chart(document.getElementById('categoryBarChart'), {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(gastosPorCategoria), // Nombres de categorías
+                            datasets: [{
+                                label: 'Gasto Mensual (€)',
+                                data: Object.values(gastosPorCategoria), // Gastos por categoría
+                                backgroundColor: baseColors.slice(0, Object.keys(gastosPorCategoria).length).map(c => c + 'cc'), // Ligeramente más transparente
+                                borderColor: baseColors.slice(0, Object.keys(gastosPorCategoria).length),
+                                borderWidth: 1,
+                                borderRadius: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { beginAtZero: true, title: { display: true, text: 'Gasto (€)' } },
+                                x: { grid: { display: false } }
+                            }
                         }
-                    }
-                });
+                    });
+                    console.log('Category bar chart created');
+                } catch (error) {
+                    console.error('Error creating category bar chart:', error);
+                }
             }
 
 
             // 2. Gráfico de Distribución de Gastos (Pastel)
             if (document.getElementById('distributionPieChart')) {
-                 new Chart(document.getElementById('distributionPieChart'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: labelsCategorias, // Etiquetas simples, el porcentaje va en el div de abajo
-                        datasets: [{
-                            data: dataCategorias,
-                            backgroundColor: baseColors.slice(0, labelsCategorias.length),
-                            borderWidth: 1,
-                            borderColor: '#ffffff' // Borde blanco para separar las secciones
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: { callbacks: { label: function(context) {
-                                let label = context.label || '';
-                                let porcentaje = distribucionGastos.find(item => item.categoria === context.label)?.porcentaje;
-                                label += `: €${context.parsed.toFixed(2)} (${porcentaje}%)`;
-                                return label;
-                            }}}
+                 try {
+                     new Chart(document.getElementById('distributionPieChart'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: labelsCategorias, // Etiquetas simples, el porcentaje va en el div de abajo
+                            datasets: [{
+                                data: dataCategorias,
+                                backgroundColor: baseColors.slice(0, labelsCategorias.length),
+                                borderWidth: 1,
+                                borderColor: '#ffffff' // Borde blanco para separar las secciones
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: { callbacks: { label: function(context) {
+                                    let label = context.label || '';
+                                    let porcentaje = distribucionGastos.find(item => item.categoria === context.label)?.porcentaje;
+                                    label += `: €${context.parsed.toFixed(2)} (${porcentaje}%)`;
+                                    return label;
+                                }}}
+                            }
                         }
-                    }
-                });
+                    });
+                    console.log('Distribution pie chart created');
+                 } catch (error) {
+                     console.error('Error creating distribution pie chart:', error);
+                 }
             }
             
             
@@ -572,27 +594,32 @@ $conn->close();
                 
                 const colorsProjection = proyeccionGastos.values.map((_, index) => index < 6 ? pastColor : futureColor); 
                 
-                 new Chart(document.getElementById('projectionBarChart'), {
-                    type: 'bar',
-                    data: {
-                        labels: proyeccionGastos.labels,
-                        datasets: [{
-                            label: 'Gasto Proyectado (€)',
-                            data: proyeccionGastos.values,
-                            backgroundColor: colorsProjection,
-                            borderRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { beginAtZero: true, title: { display: true, text: 'Gasto (€)' } },
-                            x: { grid: { display: false } }
+                 try {
+                     new Chart(document.getElementById('projectionBarChart'), {
+                        type: 'bar',
+                        data: {
+                            labels: proyeccionGastos.labels,
+                            datasets: [{
+                                label: 'Gasto Proyectado (€)',
+                                data: proyeccionGastos.values,
+                                backgroundColor: colorsProjection,
+                                borderRadius: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { beginAtZero: true, title: { display: true, text: 'Gasto (€)' } },
+                                x: { grid: { display: false } }
+                            }
                         }
-                    }
-                });
+                    });
+                    console.log('Projection bar chart created');
+                 } catch (error) {
+                     console.error('Error creating projection bar chart:', error);
+                 }
             }
 
         });
