@@ -414,7 +414,11 @@ try {
                         <!-- Acciones Rápidas -->
                         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                             <div class="mb-6">
-                                <h2 class="text-2xl font-bold text-gray-900">Acciones Rápidas</h2>
+                                <div class="flex items-center space-x-4">
+                                    <h2 class="text-2xl font-bold text-gray-900">Acciones Rápidas</h2>
+                                    <button class="bg-blue-700 hover:bg-blue-500 hover:cursor-pointer text-white font-bold py-1 px-2 rounded text-sm">Editar</button>
+                                </div>
+                                
                                 <p class="text-gray-600 mt-1">Gestiona tu cuenta y suscripciones</p>
                             </div>
 
