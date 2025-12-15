@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 // Verificar si el usuario está logueado
@@ -10,9 +11,9 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 // Conectar a la base de datos
-require_once '../../config/db.php'; // Asegúrate de que la ruta sea correcta
+require_once '../../config/db.php';
 
-// --- BLOQUE DE AUTENTICACIÓN Y ROL ---
+// --- BLOQUE DE AUTENTICACIÓN Y ROL (Copiado de la plantilla) ---
 $stmt = $conn->prepare("
     SELECT 
         u.username, u.email,
@@ -166,6 +167,9 @@ $month_names_short = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 's
 $current_month_index = (int)date('n') - 1; 
 
 for ($i = -6; $i < 6; $i++) {
+    $month_offset = $current_month_index + $i;
+    $month_index = ($month_offset % 12 + 12) % 12; 
+    
     $month_label_index = ($current_month_index + $i) % 12;
     if ($month_label_index < 0) $month_label_index += 12;
     
@@ -183,7 +187,7 @@ $conn->close();
     <title>Estadísticas - SubsZero</title>
     <link rel="icon" href="../../../assets/favicon.ico">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.2/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
     <style>
         /* Estilos específicos para la barra de navegación del teléfono */
         .modal { transition: opacity 0.25s ease; }
@@ -197,7 +201,9 @@ $conn->close();
         <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white shadow-lg flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
             <div class="p-6 border-b border-gray-200 flex items-center justify-between">
                 <div class="flex items-center">
-                    <img src="../../../assets/logo.png" width="64" height="64" alt="Icono de la app SubsZero">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-700">
+                        <span class="text-xl font-bold text-white">S</span>
+                    </div>
                     <span class="ml-3 text-xl font-bold text-gray-900">SubsZero</span>
                 </div>
                 <button onclick="toggleSidebar()" class="lg:hidden text-gray-500 hover:text-gray-700">
@@ -221,7 +227,7 @@ $conn->close();
                         <p class="text-xs text-gray-500 truncate"><?php echo htmlspecialchars($email); ?></p>
                     </div>
                 </div>
-                <div class="mt-2 flex items-center justify-between">
+                <div class="mt-2">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?php echo $role_badge_color; ?> text-white">
                         <?php if ($role == 'premium'): ?>
                             <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
@@ -234,14 +240,9 @@ $conn->close();
                         <?php endif; ?>
                         <?php echo $role_name; ?>
                     </span>
-                    <a href="../../../auth/logout.php" class="text-gray-500 hover:text-red-600 transition-colors" title="Cerrar Sesión">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                        </svg>
-                    </a>
                 </div>
             </div>
-            
+
             <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
                 <a href="../dashboard.php" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors <?php echo ($current_page_script == 'dashboard.php') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'; ?>">
                     <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/> </svg>
@@ -269,7 +270,15 @@ $conn->close();
                 </a>
             </nav>
 
-            </aside>
+            <div class="p-4 border-t border-gray-200">
+                <a href="../../../auth/logout.php" class="flex items-center px-3 py-2.5 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors">
+                    <svg class="mr-3 h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    Cerrar Sesión
+                </a>
+            </div>
+        </aside>
 
         <main class="flex-1 w-full lg:w-auto">
             <div class="lg:hidden bg-white shadow-sm sticky top-0 z-30">
@@ -392,7 +401,6 @@ $conn->close();
                                 <?php 
                                 $desglose_por_categoria = [];
                                 // Agrupar para mostrar Desglose (Categoría, %, Gasto)
-                                // Se utiliza el array $gastos_por_categoria ya calculado
                                 foreach ($stats['DesgloseDetallado'] as $item) {
                                     $gasto_total_cat = $gastos_por_categoria[$item['categoria']] ?? 0;
                                     $porcentaje_total_cat = $gasto_total > 0 ? ($gasto_total_cat / $gasto_total) * 100 : 0;
@@ -401,10 +409,8 @@ $conn->close();
                                         'gasto' => number_format($gasto_total_cat, 2)
                                     ];
                                 }
-                                // Asegurar que solo se muestren categorías una vez (desduplicar)
-                                $unique_desglose = array_unique($desglose_por_categoria, SORT_REGULAR);
                                 ?>
-                                <?php foreach ($unique_desglose as $categoria => $data): ?>
+                                <?php foreach ($desglose_por_categoria as $categoria => $data): ?>
                                     <div class="flex items-center justify-between border-b pb-3">
                                         <span class="text-base font-semibold text-gray-900"><?php echo htmlspecialchars($categoria); ?></span>
                                         <div class="flex items-center space-x-4">
@@ -414,9 +420,6 @@ $conn->close();
                                     </div>
                                 <?php endforeach; ?>
                             </div>
-                            <?php if (empty($desglose_por_categoria)): ?>
-                                <p class="text-center text-gray-500 mt-4">Añade suscripciones para ver el desglose.</p>
-                            <?php endif; ?>
                         </div>
 
                     </div>
@@ -444,7 +447,7 @@ $conn->close();
     </div>
     
     <script>
-        // --- Funciones de Sidebar ---
+        // --- Funciones de Sidebar (Copiado de la plantilla) ---
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
@@ -495,131 +498,99 @@ $conn->close();
 
         // --- LÓGICA DE GRÁFICOS (Chart.js) ---
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded, initializing charts');
             
             // Datos PHP a JS
             const distribucionGastos = <?php echo json_encode($stats['DistribucionGastos']); ?>;
             const proyeccionGastos = <?php echo json_encode($stats['ProyeccionGastos']); ?>;
             const gastosPorCategoria = <?php echo json_encode($gastos_por_categoria); ?>; // Usamos el array simple para el bar chart de categoría
 
-            console.log('Data loaded:', { distribucionGastos, proyeccionGastos, gastosPorCategoria });
-
             // Generación de colores dinámicos (para el pastel y barras)
-            const baseColors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8', '#fd7e14', '#e83e8c'];
+            const backgroundColors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8', '#fd7e14', '#e83e8c'];
             const labelsCategorias = distribucionGastos.map(item => item.categoria);
             const dataCategorias = distribucionGastos.map(item => item.gasto);
 
-            // Verificar si Chart.js está cargado
-            if (typeof Chart === 'undefined') {
-                console.error('Chart.js no está cargado');
-                alert('Error: Chart.js no se pudo cargar. Verifica tu conexión a internet o el CDN.');
-                return;
-            }
-
-            console.log('Chart.js loaded, creating charts');
-
             // 1. Gráfico de Gasto por Categoría (Barras)
             if (document.getElementById('categoryBarChart')) {
-                try {
-                    new Chart(document.getElementById('categoryBarChart'), {
-                        type: 'bar',
-                        data: {
-                            labels: Object.keys(gastosPorCategoria), // Nombres de categorías
-                            datasets: [{
-                                label: 'Gasto Mensual (€)',
-                                data: Object.values(gastosPorCategoria), // Gastos por categoría
-                                backgroundColor: baseColors.slice(0, Object.keys(gastosPorCategoria).length).map(c => c + 'cc'), // Ligeramente más transparente
-                                borderColor: baseColors.slice(0, Object.keys(gastosPorCategoria).length),
-                                borderWidth: 1,
-                                borderRadius: 4
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
-                            scales: {
-                                y: { beginAtZero: true, title: { display: true, text: 'Gasto (€)' } },
-                                x: { grid: { display: false } }
-                            }
+                new Chart(document.getElementById('categoryBarChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(gastosPorCategoria), // Nombres de categorías
+                        datasets: [{
+                            label: 'Gasto Mensual (€)',
+                            data: Object.values(gastosPorCategoria), // Gastos por categoría
+                            backgroundColor: backgroundColors.slice(0, Object.keys(gastosPorCategoria).length),
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, title: { display: true, text: 'Gasto (€)' } },
+                            x: { grid: { display: false } }
                         }
-                    });
-                    console.log('Category bar chart created');
-                } catch (error) {
-                    console.error('Error creating category bar chart:', error);
-                }
+                    }
+                });
             }
 
 
             // 2. Gráfico de Distribución de Gastos (Pastel)
             if (document.getElementById('distributionPieChart')) {
-                 try {
-                     new Chart(document.getElementById('distributionPieChart'), {
-                        type: 'doughnut',
-                        data: {
-                            labels: labelsCategorias, // Etiquetas simples, el porcentaje va en el div de abajo
-                            datasets: [{
-                                data: dataCategorias,
-                                backgroundColor: baseColors.slice(0, labelsCategorias.length),
-                                borderWidth: 1,
-                                borderColor: '#ffffff' // Borde blanco para separar las secciones
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: { callbacks: { label: function(context) {
-                                    let label = context.label || '';
-                                    let porcentaje = distribucionGastos.find(item => item.categoria === context.label)?.porcentaje;
-                                    label += `: €${context.parsed.toFixed(2)} (${porcentaje}%)`;
-                                    return label;
-                                }}}
-                            }
+                 new Chart(document.getElementById('distributionPieChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: labelsCategorias.map(label => `${label} (${distribucionGastos.find(item => item.categoria === label)?.porcentaje}%)`),
+                        datasets: [{
+                            data: dataCategorias,
+                            backgroundColor: backgroundColors.slice(0, labelsCategorias.length),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { callbacks: { label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += '€' + context.parsed.toFixed(2);
+                                return label;
+                            }}}
                         }
-                    });
-                    console.log('Distribution pie chart created');
-                 } catch (error) {
-                     console.error('Error creating distribution pie chart:', error);
-                 }
+                    }
+                });
             }
             
             
             // 3. Gráfico de Proyección de Gastos (Barras 12 Meses)
             if (document.getElementById('projectionBarChart')) {
-                // 6 meses pasados (Gris oscuro) y 6 futuros (Gris más claro)
-                const pastColor = '#343a40'; 
-                const futureColor = '#6c757d'; 
+                const colorsProjection = proyeccionGastos.values.map((_, index) => index < 6 ? '#000000' : '#495057'); // 6 meses pasados (negro) y 6 futuros (gris)
                 
-                const colorsProjection = proyeccionGastos.values.map((_, index) => index < 6 ? pastColor : futureColor); 
-                
-                 try {
-                     new Chart(document.getElementById('projectionBarChart'), {
-                        type: 'bar',
-                        data: {
-                            labels: proyeccionGastos.labels,
-                            datasets: [{
-                                label: 'Gasto Proyectado (€)',
-                                data: proyeccionGastos.values,
-                                backgroundColor: colorsProjection,
-                                borderRadius: 4
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
-                            scales: {
-                                y: { beginAtZero: true, title: { display: true, text: 'Gasto (€)' } },
-                                x: { grid: { display: false } }
-                            }
+                 new Chart(document.getElementById('projectionBarChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: proyeccionGastos.labels,
+                        datasets: [{
+                            label: 'Gasto Proyectado (€)',
+                            data: proyeccionGastos.values,
+                            backgroundColor: colorsProjection,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, title: { display: true, text: 'Gasto (€)' } },
+                            x: { grid: { display: false } }
                         }
-                    });
-                    console.log('Projection bar chart created');
-                 } catch (error) {
-                     console.error('Error creating projection bar chart:', error);
-                 }
+                    }
+                });
             }
 
         });
