@@ -69,7 +69,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             
             // Redirigir al dashboard
-            header("Location: ../dashboard/dashboard.php"); // Asegúrate que esta ruta es correcta
+            if ($_SESSION['role'] == 'admin') {
+                header("Location: ../dashboardAdmin/dashboard.php");
+            } elseif ($_SESSION['role'] == 'premium') {
+                header("Location: ../dashboard/dashboard.php");
+            } else {
+                header("Location: ../dashboardStandard/dashboard.php");
+            }
             exit();
         } else {
             // Contraseña incorrecta

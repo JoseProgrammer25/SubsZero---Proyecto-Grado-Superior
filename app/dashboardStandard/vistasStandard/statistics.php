@@ -297,17 +297,10 @@ $conn->close();
                             <p class="text-gray-600 text-base sm:text-lg">Analiza tus gastos y tendencias de suscripciones</p>
                         </div>
                         
-                        <?php if ($role === 'admin' || $role === 'premium'): ?>
-                            <button onclick="exportToCsv()" class="bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition-colors flex items-center shadow-md">
-                                <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/> </svg>
-                                Exportar CSV
-                            </button>
-                        <?php else: ?>
-                            <button onclick="showPremiumAlert()" class="bg-gray-300 text-gray-700 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center cursor-pointer hover:bg-gray-400 transition-colors shadow-md">
-                                <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/> </svg>
-                                Exportar CSV
-                            </button>
-                        <?php endif; ?>
+                        <button onclick="showPremiumAlert()" class="bg-gray-300 text-gray-700 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center cursor-pointer hover:bg-gray-400 transition-colors shadow-md">
+                            <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/> </svg>
+                            Exportar CSV
+                        </button>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -374,52 +367,6 @@ $conn->close();
                         </div>
 
                     </div>
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <h2 class="text-lg font-semibold text-gray-900 mb-4">Proyección de Gastos</h2>
-                            <p class="text-gray-600 text-sm mb-4">Estimación de gastos mensuales (últimos 6 meses y próximos 6 meses)</p>
-                            <div class="relative h-64">
-                                <canvas id="projectionBarChart"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <h2 class="text-lg font-semibold text-gray-900 mb-4">Desglose Detallado</h2>
-                            <p class="text-gray-600 text-sm mb-4">Análisis completo de tus suscripciones activas</p>
-                            <div class="space-y-4">
-                                <?php 
-                                $desglose_por_categoria = [];
-                                // Agrupar para mostrar Desglose (Categoría, %, Gasto)
-                                // Se utiliza el array $gastos_por_categoria ya calculado
-                                foreach ($stats['DesgloseDetallado'] as $item) {
-                                    $gasto_total_cat = $gastos_por_categoria[$item['categoria']] ?? 0;
-                                    $porcentaje_total_cat = $gasto_total > 0 ? ($gasto_total_cat / $gasto_total) * 100 : 0;
-                                    $desglose_por_categoria[$item['categoria']] = [
-                                        'porcentaje' => number_format($porcentaje_total_cat, 1),
-                                        'gasto' => number_format($gasto_total_cat, 2)
-                                    ];
-                                }
-                                // Asegurar que solo se muestren categorías una vez (desduplicar)
-                                $unique_desglose = array_unique($desglose_por_categoria, SORT_REGULAR);
-                                ?>
-                                <?php foreach ($unique_desglose as $categoria => $data): ?>
-                                    <div class="flex items-center justify-between border-b pb-3">
-                                        <span class="text-base font-semibold text-gray-900"><?php echo htmlspecialchars($categoria); ?></span>
-                                        <div class="flex items-center space-x-4">
-                                            <span class="text-sm text-gray-600"><?php echo $data['porcentaje']; ?>%</span>
-                                            <span class="text-base font-bold text-gray-900">€<?php echo $data['gasto']; ?>/mes</span>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                            <?php if (empty($desglose_por_categoria)): ?>
-                                <p class="text-center text-gray-500 mt-4">Añade suscripciones para ver el desglose.</p>
-                            <?php endif; ?>
-                        </div>
-
-                    </div>
                 </div>
             </div>
         </main>
@@ -432,7 +379,7 @@ $conn->close();
                 <svg class="mx-auto h-12 w-12 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                 <h3 class="mt-4 text-lg font-semibold text-gray-900">Función Premium</h3>
                 <p class="mt-2 text-sm text-gray-500">
-                    La exportación de datos a CSV es una característica exclusiva para usuarios **Premium** y **Administradores**.
+                    Esta es una función premium. Actualiza a premium para acceder a la exportación de datos a CSV.
                 </p>
             </div>
             <div class="p-4 bg-gray-50 border-t border-gray-200 rounded-b-xl flex justify-center">
@@ -487,18 +434,11 @@ $conn->close();
             }, 250);
         }
 
-        function exportToCsv() {
-            // Lógica de exportación real para Admin/Premium
-            alert("¡Exportando datos a CSV! (Funcionalidad para Admin/Premium)");
-            // Aquí iría una llamada AJAX o fetch para generar y descargar el archivo.
-        }
-
         // --- LÓGICA DE GRÁFICOS (Chart.js) ---
         document.addEventListener('DOMContentLoaded', () => {
             
             // Datos PHP a JS
             const distribucionGastos = <?php echo json_encode($stats['DistribucionGastos']); ?>;
-            const proyeccionGastos = <?php echo json_encode($stats['ProyeccionGastos']); ?>;
             const gastosPorCategoria = <?php echo json_encode($gastos_por_categoria); ?>; // Usamos el array simple para el bar chart de categoría
 
             // Generación de colores dinámicos (para el pastel y barras)
@@ -564,37 +504,6 @@ $conn->close();
             }
             
             
-            // 3. Gráfico de Proyección de Gastos (Barras 12 Meses)
-            if (document.getElementById('projectionBarChart')) {
-                // 6 meses pasados (Gris oscuro) y 6 futuros (Gris más claro)
-                const pastColor = '#343a40'; 
-                const futureColor = '#6c757d'; 
-                
-                const colorsProjection = proyeccionGastos.values.map((_, index) => index < 6 ? pastColor : futureColor); 
-                
-                 new Chart(document.getElementById('projectionBarChart'), {
-                    type: 'bar',
-                    data: {
-                        labels: proyeccionGastos.labels,
-                        datasets: [{
-                            label: 'Gasto Proyectado (€)',
-                            data: proyeccionGastos.values,
-                            backgroundColor: colorsProjection,
-                            borderRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { beginAtZero: true, title: { display: true, text: 'Gasto (€)' } },
-                            x: { grid: { display: false } }
-                        }
-                    }
-                });
-            }
-
         });
     </script>
 </body>
