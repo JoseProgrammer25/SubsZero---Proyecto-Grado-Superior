@@ -78,22 +78,23 @@ try {
     // Calcular gasto anual
     $annual_expense = $monthly_expense * 12;
     
-    // Obtener el próximo pago (suscripción con la fecha más cercana)
+    // Obtener los próximos pagos (las 2 suscripciones más cercanas)
     $stmt = $conn->prepare("
         SELECT name, next_billing_date, price 
         FROM subscriptions 
         WHERE user_id = ? AND next_billing_date >= CURDATE()
         ORDER BY next_billing_date ASC 
-        LIMIT 1
+        LIMIT 2
     ");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    $next_payment = $result->fetch_assoc();
+    $upcoming_payments = $result->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
     
-    // Formatear la fecha del próximo pago
-    if ($next_payment) {
+    // Formatear la fecha del próximo pago (el más cercano)
+    if (!empty($upcoming_payments)) {
+        $next_payment = $upcoming_payments[0];
         $date = new DateTime($next_payment['next_billing_date']);
         setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
         $next_payment_date = $date->format('d M');
@@ -109,6 +110,7 @@ try {
     $annual_expense = 0;
     $next_payment_date = '-';
     $next_payment_name = 'Error al cargar';
+    $upcoming_payments = [];
 }
 // Importante: Cerrar la conexión después de usarla
 if (isset($conn)) {
@@ -319,26 +321,7 @@ if (isset($conn)) {
                             </div>
 
                             <?php
-                            // Se asume que la conexión a la base de datos se cerró previamente, si se necesita aquí
-                            // habría que reabrirla o no cerrarla en el bloque anterior (se recomienda cerrarla al final del script).
-                            // Ya que el código original cerró la conexión, este bloque se ejecutará sin los datos si la conexión no está abierta.
-                            // Para fines de demostración, asumiremos que se debe reabrir si es necesario, o que los datos ya están en variables si se cerró la conexión al final del script.
-                            
-                            // *** NOTA: Para que este bucle funcione, debes mover el $conn->close() al final del script PHP, antes de la etiqueta </html>.
-
-                            // Aquí reabriríamos si $conn ya estuviera cerrado, pero para simplificar, asumimos que $upcoming_payments se llenó correctamente arriba.
-                            
-                            // Ya que el código original cerró la conexión antes de este bucle, si se ejecuta tal cual, fallará. 
-                            // Dado que ya has visto los bloques de código modificados anteriormente, solo se mantiene la estructura visual de lo que se debería mostrar.
-                            
-                            // *** Para este ejemplo, voy a asumir que las variables de estadísticas (incluyendo $next_payment y $upcoming_payments) se llenaron correctamente antes de que el código cerrara la conexión.
-
-                            $upcoming_payments_simulated = [
-                                ['name' => 'Netflix', 'next_billing_date' => date('Y-m-d', strtotime('+5 days')), 'price' => 12.99],
-                                ['name' => 'Spotify Premium', 'next_billing_date' => date('Y-m-d', strtotime('+15 days')), 'price' => 9.99],
-                            ];
-                            
-                            if (isset($upcoming_payments) && count($upcoming_payments) > 0):
+                            if (count($upcoming_payments) > 0):
                                 foreach ($upcoming_payments as $payment):
                                     $date = new DateTime($payment['next_billing_date']);
                                     $now = new DateTime();
@@ -373,7 +356,7 @@ if (isset($conn)) {
                                 </div>
                             <?php 
                                 endforeach;
-                            elseif (!isset($upcoming_payments) || count($upcoming_payments) === 0):
+                            else:
                             ?>
                                 <div class="text-center py-12">
                                     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -445,3 +428,9 @@ if (isset($conn)) {
     </script>
 </body>
 </html>
+<?php
+// Cerrar la conexión a la base de datos al final del script
+if (isset($conn)) {
+    $conn->close();
+}
+?>
