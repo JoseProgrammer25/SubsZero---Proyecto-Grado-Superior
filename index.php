@@ -13,23 +13,21 @@
 <body class="bg-white">
 
     <!-- HEADER -->
-    <header class="flex flex-col md:flex-row h-auto md:h-16 border-b border-gray-300 p-4 md:p-0">
+    <header class="flex flex-col bg-blue-700 md:flex-row h-auto md:h-16 border-b border-gray-300 p-4 md:p-0">
         <div class="flex flex-row items-center mx-4 md:ml-8 lg:ml-32 space-x-4">
-            <div class="pl-3 pr-3 pt-1 pb-1 md:pl-4 md:pr-4 md:pt-2 md:pb-2 bg-blue-800 rounded-xl">
-                <h1 class="text-white text-lg md:text-xl font-bold">S</h1>
-            </div>
-            <h1 class="text-lg md:text-xl font-bold"><a href="index.php">SubsZero</a></h1>
+                <img src="assets/logo.png" width="64px" height="64px">
+            <h1 class="text-lg md:text-xl font-bold text-white"><a href="index.php">SubsZero</a></h1>
         </div>
 
         <div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4 mt-4 md:mt-0 md:ml-auto mx-4 md:mr-8 lg:mr-32">
             <a href="auth/login.php">
-                <button class="w-full md:w-auto p-2 pl-4 pr-4 rounded-xl text-black duration-300 hover:bg-cyan-600 hover:text-white">
+                <button class="w-full md:w-auto p-2 pl-4 pr-4 rounded-xl text-white duration-300 hover:bg-cyan-600 hover:text-white cursor-pointer">
                     Iniciar Sesión
                 </button>
             </a>
 
             <a href="auth/signup.php">
-                <button class="w-full md:w-auto p-2 pl-4 pr-4 bg-blue-800 rounded-xl text-white duration-300 hover:bg-blue-700">
+                <button class="w-full md:w-auto p-2 pl-4 pr-4 bg-white rounded-xl text-black duration-300 hover:bg-blue-400 hover:text-white cursor-pointer">
                     Registrarse
                 </button>
             </a>
@@ -52,13 +50,13 @@
 
                 <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                     <a href="auth/signup.php">   
-                        <button class="p-3 px-6 bg-blue-800 rounded-xl text-white hover:bg-blue-700 duration-300">
+                        <button class="p-3 px-6 bg-blue-800 rounded-xl text-white hover:bg-blue-700 duration-300 cursor-pointer">
                             Comenzar Gratis
                         </button>
                     </a>
 
                     <a href="auth/login.php">
-                        <button class="p-3 px-6 border border-gray-400 rounded-xl hover:bg-cyan-600 hover:text-white duration-300">
+                        <button class="p-3 px-6 border border-gray-400 rounded-xl hover:bg-cyan-600 hover:text-white duration-300 cursor-pointer">
                             Iniciar Sesión
                         </button>
                     </a>
