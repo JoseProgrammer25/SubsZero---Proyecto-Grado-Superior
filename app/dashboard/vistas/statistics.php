@@ -53,22 +53,17 @@ $user_initial = strtoupper(substr($username, 0, 1));
 $current_page_script = basename(__FILE__); // Debe ser 'statistics.php'
 
 
-// =================================================================
-// INICIO DEL BLOQUE DE LÓGICA DE ESTADÍSTICAS
-// =================================================================
-
 $stats = [
     'GastoMensual' => 0.00,
     'GastoAnual' => 0.00,
     'SuscripcionesActivas' => 0,
     'PromedioPorSuscripcion' => 0.00,
-    'AhorroPotencial' => 12.20, // Ejemplo fijo, requiere lógica de negocio
+    'AhorroPotencial' => 12.20, 
     'DistribucionGastos' => [],
     'DesgloseDetallado' => [],
     'ProyeccionGastos' => ['labels' => [], 'values' => []]
 ];
 
-// --- 1. OBTENER MÉTRICAS CLAVE ---
 $sql_key_metrics = "
     SELECT
         SUM(CASE
@@ -107,8 +102,6 @@ if ($stmt = $conn->prepare($sql_key_metrics)) {
     $stmt->close();
 }
 
-
-// --- 2. OBTENER DISTRIBUCIÓN Y DESGLOSE DETALLADO ---
 $sql_distribution = "
     SELECT
         c.name AS Categoria,
@@ -167,8 +160,6 @@ foreach ($gastos_por_categoria as $categoria => $gasto) {
 }
 
 
-// --- 3. PROYECCIÓN DE GASTOS (Gráfico de Barras) ---
-
 $GastoMensualBase = $stats['GastoMensual']; // Usamos el gasto mensual ya calculado
 $projected_months = 12; // 6 meses pasados + 6 meses futuros
 $month_names_short = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
@@ -176,24 +167,14 @@ $current_month_index = (int)date('n') - 1;
 
 for ($i = -6; $i < 6; $i++) {
     $month_offset = $current_month_index + $i;
-    $month_index = ($month_offset % 12 + 12) % 12; // Cálculo circular
+    $month_index = ($month_offset % 12 + 12) % 12; 
     
-    // La imagen del gráfico de barras comienza en 'jun', así que ajustamos la etiqueta
-    // Basándonos en la imagen de ejemplo (jun -> jul -> ago -> ... -> may)
-    // Usaremos la lógica de 12 meses, asumiendo que el centro es el mes actual.
-    
-    // Calcular el mes para la etiqueta, ajustando para que 'jun' sea el mes 0 en el ejemplo
     $month_label_index = ($current_month_index + $i) % 12;
     if ($month_label_index < 0) $month_label_index += 12;
     
     $stats['ProyeccionGastos']['labels'][] = $month_names_short[$month_label_index];
     $stats['ProyeccionGastos']['values'][] = number_format($GastoMensualBase, 2, '.', '');
 }
-
-
-// =================================================================
-// FIN DEL BLOQUE DE LÓGICA DE ESTADÍSTICAS
-// =================================================================
 
 $conn->close();
 ?>
