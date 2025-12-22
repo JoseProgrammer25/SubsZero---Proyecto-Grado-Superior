@@ -110,6 +110,7 @@ try {
     $annual_expense = 0;
     $next_payment_date = '-';
     $next_payment_name = 'Error al cargar';
+    $upcoming_payments = [];
 }
 // Importante: Cerrar la conexión después de usarla
 if (isset($conn)) {
@@ -132,7 +133,7 @@ if (isset($conn)) {
         <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white shadow-lg flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
             <div class="p-6 border-b border-gray-200 flex items-center justify-between">
                 <div class="flex items-center">
-                    <img src="../../assets/logo.png" width="64" height="64" alt="Icono de la app SubsZero">
+                    <img src="../../assets/favicon.ico" width="64" height="64" alt="Icono de la app SubsZero">
                     <span class="ml-3 text-xl font-bold text-gray-900">SubsZero</span>
                 </div>
                 <button onclick="toggleSidebar()" class="lg:hidden text-gray-500 hover:text-gray-700">
@@ -187,35 +188,35 @@ if (isset($conn)) {
                     Dashboard
                 </a>
                 
-                <a href="vistas/subscriptions.php" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors <?php echo ($current_page == 'subscriptions.php') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'; ?>">
+                <a href="vistasStandard/subscriptions.php" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors <?php echo ($current_page == 'subscriptions.php') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'; ?>">
                     <svg class="mr-3 h-5 w-5 flex-shrink-0 <?php echo ($current_page == 'subscriptions.php') ? 'text-gray-900' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                     </svg>
                     Suscripciones
                 </a>
                 
-                <a href="vistas/statistics.php" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors <?php echo ($current_page == 'statistics.php') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'; ?>">
+                <a href="vistasStandard/statistics.php" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors <?php echo ($current_page == 'statistics.php') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'; ?>">
                     <svg class="mr-3 h-5 w-5 flex-shrink-0 <?php echo ($current_page == 'statistics.php') ? 'text-gray-900' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                     </svg>
                     Estadísticas
                 </a>
                 
-                <a href="vistas/notifications.php" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors <?php echo ($current_page == 'notifications.php') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'; ?>">
+                <a href="vistasStandard/notifications.php" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors <?php echo ($current_page == 'notifications.php') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'; ?>">
                     <svg class="mr-3 h-5 w-5 flex-shrink-0 <?php echo ($current_page == 'notifications.php') ? 'text-gray-900' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                     </svg>
                     Notificaciones
                 </a>
                 
-                <a href="vistas/forums.php" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors <?php echo ($current_page == 'forums.php') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'; ?>">
+                <a href="vistasStandard/forums.php" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors <?php echo ($current_page == 'forums.php') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'; ?>">
                     <svg class="mr-3 h-5 w-5 flex-shrink-0 <?php echo ($current_page == 'forums.php') ? 'text-gray-900' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                     </svg>
                     Foros
                 </a>
                 
-                <a href="vistas/settings.php" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors <?php echo ($current_page == 'settings.php') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'; ?>">
+                <a href="vistasStandard/settings.php" class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors <?php echo ($current_page == 'settings.php') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'; ?>">
                     <svg class="mr-3 h-5 w-5 flex-shrink-0 <?php echo ($current_page == 'settings.php') ? 'text-gray-900' : 'text-gray-500'; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -427,3 +428,9 @@ if (isset($conn)) {
     </script>
 </body>
 </html>
+<?php
+// Cerrar la conexión a la base de datos al final del script
+if (isset($conn)) {
+    $conn->close();
+}
+?>
