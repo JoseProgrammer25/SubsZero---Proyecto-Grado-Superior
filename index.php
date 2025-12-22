@@ -15,7 +15,7 @@
     <!-- HEADER -->
     <header class="flex flex-col bg-blue-700 md:flex-row h-auto md:h-16 border-b border-gray-300 p-4 md:p-0">
         <div class="flex flex-row items-center mx-4 md:ml-8 lg:ml-32 space-x-4">
-                <img src="assets/logo.png" width="64px" height="64px">
+                <img src="assets/favicon.ico" width="64px" height="64px">
             <h1 class="text-lg md:text-xl font-bold text-white"><a href="index.php">SubsZero</a></h1>
         </div>
 

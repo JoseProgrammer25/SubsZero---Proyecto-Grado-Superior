@@ -125,9 +125,7 @@ try {
         <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white shadow-xl flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
             <div class="p-6 border-b border-gray-200 flex items-center justify-between bg-white"> 
                 <div class="flex items-center">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
-                        <span class="text-xl font-bold text-white">S</span>
-                    </div>
+                    <img src="../../assets/favicon.ico" width="64" height="64" alt="Icono de la app SubsZero">
                     <span class="ml-3 text-xl font-bold text-gray-900">SubsZero</span>
                 </div>
                 <button onclick="toggleSidebar()" class="lg:hidden text-gray-500 hover:text-gray-700">

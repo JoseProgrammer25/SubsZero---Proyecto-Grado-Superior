@@ -233,7 +233,7 @@ $conn->close();
         <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white shadow-lg flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
             <div class="p-6 border-b border-gray-200 flex items-center justify-between">
                 <div class="flex items-center">
-                    <img src="../../../assets/logo.png" width="64" height="64" alt="Icono de la app SubsZero">
+                    <img src="../../../assets/favicon.ico" width="64" height="64" alt="Icono de la app SubsZero">
                     <span class="ml-3 text-xl font-bold text-gray-900">SubsZero</span>
                 </div>
                 <button onclick="toggleSidebar()" class="lg:hidden text-gray-500 hover:text-gray-700">
